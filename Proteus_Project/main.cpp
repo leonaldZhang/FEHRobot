@@ -52,7 +52,7 @@ void turn_left(int percentage, int encoder_counts) {
 }
 
 /* function for moving forward. use encoders */
-void move_forward(int percentage, int encoder_counts) { 
+void move_straight(int percentage, int encoder_counts) { 
     // Reset encoder counts
     right_encoder.ResetCounts();
     left_encoder.ResetCounts();
@@ -71,7 +71,7 @@ void move_forward(int percentage, int encoder_counts) {
 }
 
 float read_cds() {
-    
+
 }
 
 int main(void)
