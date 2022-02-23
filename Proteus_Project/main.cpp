@@ -4,6 +4,7 @@
 #include <FEHMotor.h>
 #include <FEHRPS.h>
 // #define CDS_THRESHOLD *put value here*
+#define CDS_THESHOLD 1.0
 
 /* Declarations for encoders, motors, and input pins (all subject to
 change) */
@@ -11,6 +12,7 @@ DigitalEncoder right_encoder(FEHIO::P0_0);
 DigitalEncoder left_encoder(FEHIO::P0_1);
 FEHMotor right_motor(FEHMotor::Motor0, 9.0);
 FEHMotor left_motor(FEHMotor::Motor1, 9.0);
+AnalogInputPin cds(FEHIO::P1_0);
 
 
 /* function for turning right. use encoders */
@@ -76,6 +78,10 @@ float read_cds() {
 
 int main(void)
 {
+    while(cds.Value() > CDS_THESHOLD); // while the CdS reading is greater than threshold, wait
+    
+    /* Insert code here for starting the robot */
+    
     LCD.WriteLine("Hello World!");
 	return 0;
 }
