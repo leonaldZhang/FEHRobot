@@ -67,11 +67,16 @@ void move_straight(int percentage, int encoder_counts) {
 
     // Keep running motors while average of left and right encoder is less
     // than encoderCounts
-    while((left_encoder.Counts() + right_encoder.Counts()) / 2.0 < encoder_counts);
-
+    while((left_encoder.Counts() + right_encoder.Counts()) / 2.0 < encoder_counts){
+        LCD.WriteLine(right_encoder.Counts());
+        LCD.WriteLine(left_encoder.Counts());
+    }
+    
     // turn off motors
     right_motor.Stop();
     left_motor.Stop();
+
+    
 }
 
 /* function for moving at an angle 
@@ -135,6 +140,9 @@ void start(){
     
 }
 
+void pushButton() {
+
+}
 
 int main(void)
 {
