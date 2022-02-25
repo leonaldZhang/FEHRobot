@@ -161,7 +161,7 @@ void pushButton() {
         turn_right(20, COUNTS_PER_INCH * 5);
         move_straight(20, COUNTS_PER_INCH * 0.5);
         turn_left(20, COUNTS_PER_INCH * 5);
-        move_straight(20, COUNTS_PER_INCH * 7);
+        move_straight(20, COUNTS_PER_INCH * 6);
     } else {
         LCD.Clear(BLUE); // Display what color is read
         LCD.WriteLine("Need to hit BLUE");
@@ -169,7 +169,7 @@ void pushButton() {
         turn_left(20, COUNTS_PER_INCH * 5);
         move_straight(20, COUNTS_PER_INCH * 0.5);
         turn_right(20, COUNTS_PER_INCH * 5);
-        move_straight(20, COUNTS_PER_INCH * 7);
+        move_straight(20, COUNTS_PER_INCH * 6);
     }
 }
 
