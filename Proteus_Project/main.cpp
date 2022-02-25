@@ -7,12 +7,12 @@
 #define CDS_BLUE_THRESHOLD 1.015
 #define CDS_RED_THRESHOLD .2
 #define CDS_UPPER_THRESHOLD 2.0
-#define COUNTS_PER_INCH 34
+#define COUNTS_PER_INCH 34.0
 
 /* Declarations for encoders, motors, and input pins (all subject to
 change) */
 DigitalEncoder right_encoder(FEHIO::P2_0); 
-DigitalEncoder left_encoder(FEHIO::P2_7);
+DigitalEncoder left_encoder(FEHIO::P3_0);
 FEHMotor right_motor(FEHMotor::Motor0, 9.0);
 FEHMotor left_motor(FEHMotor::Motor3, 9.0);
 AnalogInputPin cds(FEHIO::P1_0);
@@ -67,10 +67,8 @@ void move_straight(int percentage, int encoder_counts) {
 
     // Keep running motors while average of left and right encoder is less
     // than encoderCounts
-    while((left_encoder.Counts() + right_encoder.Counts()) / 2.0 < encoder_counts){
-        LCD.WriteLine(right_encoder.Counts());
-        LCD.WriteLine(left_encoder.Counts());
-    }
+    while((left_encoder.Counts() + right_encoder.Counts()) / 2.0 < encoder_counts);
+    
     
     // turn off motors
     right_motor.Stop();
@@ -141,13 +139,24 @@ void start(){
 }
 
 void pushButton() {
-
+    if (cds.Value() < CDS_RED_THRESHOLD) {
+        turn_right(20, COUNTS_PER_INCH * 5);
+        move_straight(20, COUNTS_PER_INCH * 0.5);
+        turn_left(20, COUNTS_PER_INCH * 5);
+        move_straight(20, COUNTS_PER_INCH * 9);
+    } else {
+        turn_left(20, COUNTS_PER_INCH * 5);
+        move_straight(20, COUNTS_PER_INCH * 0.5);
+        turn_right(20, COUNTS_PER_INCH * 5);
+        move_straight(20, COUNTS_PER_INCH * 9);
+    }
 }
 
 int main(void)
 {
     /* Code to go to the jukebox light from the start*/
-    start();
+    pushButton();
+    //start();
     /* Reads light and makes decision for which button to press */
 	return 0;
 }
