@@ -140,16 +140,18 @@ void start(){
         LCD.WriteLine("The start line was red"); // Display what color is read
     }
     move_straight(20, COUNTS_PER_INCH*13);
-    turn_left(20, COUNTS_PER_INCH*5);
+    turn_left(20, COUNTS_PER_INCH*5.3);
     move_straight(20, COUNTS_PER_INCH*16.8);
-    turn_left(20, COUNTS_PER_INCH*5.5);
-    move_straight(20, COUNTS_PER_INCH * 1.5);
+    turn_left(20, COUNTS_PER_INCH*5.3);
+    move_straight(20, COUNTS_PER_INCH * 0.25);
 
     Sleep(1.0);
     
 }
 
-void pushButton() {
+bool pushButton() {
+    // Set boolean to know which button was hit. False is red, true is blue
+    bool button = false;
     // Display what function is currently running
     LCD.Clear();
     LCD.WriteLine("pushButton"); 
@@ -170,26 +172,40 @@ void pushButton() {
         move_straight(20, COUNTS_PER_INCH * 0.5);
         turn_right(20, COUNTS_PER_INCH * 5);
         move_straight(20, COUNTS_PER_INCH * 6);
+        button = true; // hit blue button
     }
+    return button;
 }
 
-void toRamp() {
-    move_straight(-20, COUNTS_PER_INCH * 6);
-    turn_right(20, COUNTS_PER_INCH * 5);
-    move_straight(-20, COUNTS_PER_INCH * 6);
-    turn_left(20, COUNTS_PER_INCH * 5);
-    move_straight(-20, COUNTS_PER_INCH * 4);
+void toRamp(bool redBlue) {
+    LCD.Clear();
+    LCD.WriteLine("toRamp");
+    if (!redBlue) {
+        move_straight(-20, COUNTS_PER_INCH * 6);
+        turn_right(20, COUNTS_PER_INCH * 5);
+        move_straight(-20, COUNTS_PER_INCH * 10);
+        turn_left(20, COUNTS_PER_INCH * 5);
+        move_straight(-20, COUNTS_PER_INCH * 4);
+    } else {
+        move_straight(-20, COUNTS_PER_INCH * 6);
+        turn_right(20, COUNTS_PER_INCH * 5);
+        move_straight(-20, COUNTS_PER_INCH * 9);
+        turn_left(20, COUNTS_PER_INCH * 5);
+        move_straight(-20, COUNTS_PER_INCH * 4);
+    }
+    
 }
+
 int main(void)
 {
     /* Code to go to the jukebox light from the start*/
     start();
     Sleep(1.0);
-    pushButton();
+    bool whichButton = pushButton(); // get which button was pressed.
     Sleep(1.0);
-    toRamp();
-    move_straight(-35, COUNTS_PER_INCH * 15);
-    move_straight(20, COUNTS_PER_INCH * 15);
+    toRamp(whichButton); // move to ramp based on which button was pressed
+    move_straight(-40, COUNTS_PER_INCH * 30);
+    move_straight(20, COUNTS_PER_INCH * 20);
     /* Reads light and makes decision for which button to press */
 	return 0;
 }
