@@ -140,10 +140,10 @@ void start(){
         LCD.WriteLine("The start line was red"); // Display what color is read
     }
     move_straight(20, COUNTS_PER_INCH*13);
-    turn_left(20, COUNTS_PER_INCH*5.3);
+    turn_left(20, COUNTS_PER_INCH*5.1);
     move_straight(20, COUNTS_PER_INCH*16.8);
     turn_left(20, COUNTS_PER_INCH*5.3);
-    move_straight(20, COUNTS_PER_INCH * 0.25);
+    move_straight(20, COUNTS_PER_INCH * 0.75);
 
     Sleep(1.0);
     
@@ -205,6 +205,7 @@ int main(void)
     Sleep(1.0);
     toRamp(whichButton); // move to ramp based on which button was pressed
     move_straight(-40, COUNTS_PER_INCH * 30);
+    Sleep(0.5);
     move_straight(20, COUNTS_PER_INCH * 20);
     /* Reads light and makes decision for which button to press */
 	return 0;
