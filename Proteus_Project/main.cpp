@@ -122,6 +122,10 @@ void angled_turn(int direction, int percentage, float angle, int inches){
 }
 /* Function for moving based off sensing the start light */
 void start(){
+    // Display what function is currently running
+    LCD.Clear();
+    LCD.WriteLine("start");
+    
     // Wait until light goes on
     while (cds.Value() > CDS_BLUE_THRESHOLD);
     // Calling function to make angled turn to the front left 20 inches at a 5 degree angle
@@ -130,33 +134,45 @@ void start(){
     angled_turn(4, 20, 55.0, 12);
     // Calling function to go to the front right 8 inches at a 5 degree angle to the light
     angled_turn(1, 20, 5.0, 5); */
-    move_straight(20, COUNTS_PER_INCH*9);
+    if((cds.Value() > CDS_RED_THRESHOLD) && cds.Value() < CDS_BLUE_THRESHOLD) {
+        LCD.WriteLine("The start line was blue");
+    } else {
+        LCD.WriteLine("The start line was red");
+    }
+    move_straight(20, COUNTS_PER_INCH*13);
     turn_left(20, COUNTS_PER_INCH*5);
-    move_straight(20, COUNTS_PER_INCH*18);
-    turn_left(20, COUNTS_PER_INCH*5);
-    move_straight(20, COUNTS_PER_INCH*3);
+    move_straight(20, COUNTS_PER_INCH*16.8);
+    turn_left(20, COUNTS_PER_INCH*5.5);
+    move_straight(20, COUNTS_PER_INCH*2);
     
 }
 
 void pushButton() {
+    // Display what function is currently running
+    LCD.Clear();
+    LCD.WriteLine("pushButton"); 
+
     if (cds.Value() < CDS_RED_THRESHOLD) {
+        LCD.Clear();
+        LCD.WriteLine("Need to hit RED");
         turn_right(20, COUNTS_PER_INCH * 5);
         move_straight(20, COUNTS_PER_INCH * 0.5);
         turn_left(20, COUNTS_PER_INCH * 5);
-        move_straight(20, COUNTS_PER_INCH * 9);
+        move_straight(20, COUNTS_PER_INCH * 7);
     } else {
+        LCD.Clear();
+        LCD.WriteLine("Need to hit BLUE");
         turn_left(20, COUNTS_PER_INCH * 5);
         move_straight(20, COUNTS_PER_INCH * 0.5);
         turn_right(20, COUNTS_PER_INCH * 5);
-        move_straight(20, COUNTS_PER_INCH * 9);
+        move_straight(20, COUNTS_PER_INCH * 7);
     }
 }
 
 int main(void)
 {
     /* Code to go to the jukebox light from the start*/
-    pushButton();
-    //start();
+    start();
     /* Reads light and makes decision for which button to press */
 	return 0;
 }
