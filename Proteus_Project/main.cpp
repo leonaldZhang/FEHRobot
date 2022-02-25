@@ -5,7 +5,7 @@
 #include <FEHRPS.h>
 // #define CDS_THRESHOLD *put value here*
 #define CDS_BLUE_THRESHOLD 1.015
-#define CDS_RED_THRESHOLD .2
+#define CDS_RED_THRESHOLD .5
 #define CDS_UPPER_THRESHOLD 2.0
 #define COUNTS_PER_INCH 34.0
 
@@ -125,7 +125,7 @@ void start(){
     // Display what function is currently running
     LCD.Clear();
     LCD.WriteLine("start");
-    
+
     // Wait until light goes on
     while (cds.Value() > CDS_BLUE_THRESHOLD);
     // Calling function to make angled turn to the front left 20 inches at a 5 degree angle
@@ -135,15 +135,17 @@ void start(){
     // Calling function to go to the front right 8 inches at a 5 degree angle to the light
     angled_turn(1, 20, 5.0, 5); */
     if((cds.Value() > CDS_RED_THRESHOLD) && cds.Value() < CDS_BLUE_THRESHOLD) {
-        LCD.WriteLine("The start line was blue");
+        LCD.WriteLine("The start line was blue"); // Display what color is read
     } else {
-        LCD.WriteLine("The start line was red");
+        LCD.WriteLine("The start line was red"); // Display what color is read
     }
     move_straight(20, COUNTS_PER_INCH*13);
     turn_left(20, COUNTS_PER_INCH*5);
     move_straight(20, COUNTS_PER_INCH*16.8);
     turn_left(20, COUNTS_PER_INCH*5.5);
-    move_straight(20, COUNTS_PER_INCH*2);
+    move_straight(20, COUNTS_PER_INCH * 1.5);
+
+    Sleep(1.0);
     
 }
 
@@ -153,15 +155,17 @@ void pushButton() {
     LCD.WriteLine("pushButton"); 
 
     if (cds.Value() < CDS_RED_THRESHOLD) {
-        LCD.Clear();
+        LCD.Clear(RED); // Display what color is read
         LCD.WriteLine("Need to hit RED");
+        LCD.WriteLine(cds.Value());
         turn_right(20, COUNTS_PER_INCH * 5);
         move_straight(20, COUNTS_PER_INCH * 0.5);
         turn_left(20, COUNTS_PER_INCH * 5);
         move_straight(20, COUNTS_PER_INCH * 7);
     } else {
-        LCD.Clear();
+        LCD.Clear(BLUE); // Display what color is read
         LCD.WriteLine("Need to hit BLUE");
+        LCD.WriteLine(cds.Value());
         turn_left(20, COUNTS_PER_INCH * 5);
         move_straight(20, COUNTS_PER_INCH * 0.5);
         turn_right(20, COUNTS_PER_INCH * 5);
@@ -169,10 +173,23 @@ void pushButton() {
     }
 }
 
+void toRamp() {
+    move_straight(-20, COUNTS_PER_INCH * 6);
+    turn_right(20, COUNTS_PER_INCH * 5);
+    move_straight(-20, COUNTS_PER_INCH * 6);
+    turn_left(20, COUNTS_PER_INCH * 5);
+    move_straight(-20, COUNTS_PER_INCH * 4);
+}
 int main(void)
 {
     /* Code to go to the jukebox light from the start*/
     start();
+    Sleep(1.0);
+    pushButton();
+    Sleep(1.0);
+    toRamp();
+    move_straight(-35, COUNTS_PER_INCH * 15);
+    move_straight(20, COUNTS_PER_INCH * 15);
     /* Reads light and makes decision for which button to press */
 	return 0;
 }
