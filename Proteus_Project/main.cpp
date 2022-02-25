@@ -12,9 +12,9 @@
 /* Declarations for encoders, motors, and input pins (all subject to
 change) */
 DigitalEncoder right_encoder(FEHIO::P2_0); 
-DigitalEncoder left_encoder(FEHIO::P3_0);
+DigitalEncoder left_encoder(FEHIO::P3_0); //Left stupid
 FEHMotor right_motor(FEHMotor::Motor0, 9.0);
-FEHMotor left_motor(FEHMotor::Motor3, 9.0);
+FEHMotor left_motor(FEHMotor::Motor3, 9.0); //left taped
 AnalogInputPin cds(FEHIO::P1_0);
 
 /* function for turning right. use encoders */
@@ -163,7 +163,7 @@ bool pushButton() {
         turn_right(20, COUNTS_PER_INCH * 5);
         move_straight(20, COUNTS_PER_INCH * 0.5);
         turn_left(20, COUNTS_PER_INCH * 5);
-        move_straight(20, COUNTS_PER_INCH * 6);
+        move_straight(20, COUNTS_PER_INCH * 5);
     } else {
         LCD.Clear(BLUE); // Display what color is read
         LCD.WriteLine("Need to hit BLUE");
@@ -171,7 +171,7 @@ bool pushButton() {
         turn_left(20, COUNTS_PER_INCH * 5);
         move_straight(20, COUNTS_PER_INCH * 0.5);
         turn_right(20, COUNTS_PER_INCH * 5);
-        move_straight(20, COUNTS_PER_INCH * 6);
+        move_straight(20, COUNTS_PER_INCH * 5);
         button = true; // hit blue button
     }
     return button;
@@ -204,9 +204,10 @@ int main(void)
     bool whichButton = pushButton(); // get which button was pressed.
     Sleep(1.0);
     toRamp(whichButton); // move to ramp based on which button was pressed
-    move_straight(-40, COUNTS_PER_INCH * 30);
-    Sleep(0.5);
-    move_straight(20, COUNTS_PER_INCH * 20);
+    move_straight(-40, COUNTS_PER_INCH * 20);
+    move_straight(-20, COUNTS_PER_INCH * 10);
+    Sleep(1.0);
+    move_straight(20, COUNTS_PER_INCH * 30);
     /* Reads light and makes decision for which button to press */
 	return 0;
 }
