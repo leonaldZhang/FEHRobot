@@ -150,7 +150,7 @@ void start(){
 
         Sleep(1.0);
     }
-    // Once 30 seconds elapsed, start anyway.
+    // Once 30 seconds elapsed, start anyway
     LCD.WriteLine("Did not read a light within 30 secs. Starting anyway.");
     move_straight(20, COUNTS_PER_INCH*13);
     turn_left(20, COUNTS_PER_INCH*5.1);
