@@ -126,19 +126,32 @@ void start(){
     LCD.Clear();
     LCD.WriteLine("start");
 
-    // Wait until light goes on
-    while (cds.Value() > CDS_BLUE_THRESHOLD);
-    // Calling function to make angled turn to the front left 20 inches at a 5 degree angle
-    /*angled_turn(2, 20, 10.0, 20);
-    // Calling function to make backward right angled 5 inches at a 3 degree angle turn to re align 
-    angled_turn(4, 20, 55.0, 12);
-    // Calling function to go to the front right 8 inches at a 5 degree angle to the light
-    angled_turn(1, 20, 5.0, 5); */
-    if((cds.Value() > CDS_RED_THRESHOLD) && cds.Value() < CDS_BLUE_THRESHOLD) {
-        LCD.WriteLine("The start line was blue"); // Display what color is read
-    } else {
-        LCD.WriteLine("The start line was red"); // Display what color is read
+    // While elapsed time is less than 30 seconds.
+    float time_now = TimeNow();
+    while(TimeNow() - time_now < 30) {
+        // Wait until light goes on
+        while (cds.Value() > CDS_BLUE_THRESHOLD);
+        // Calling function to make angled turn to the front left 20 inches at a 5 degree angle
+        /*angled_turn(2, 20, 10.0, 20);
+        // Calling function to make backward right angled 5 inches at a 3 degree angle turn to re align 
+        angled_turn(4, 20, 55.0, 12);
+        // Calling function to go to the front right 8 inches at a 5 degree angle to the light
+        angled_turn(1, 20, 5.0, 5); */
+        if((cds.Value() > CDS_RED_THRESHOLD) && cds.Value() < CDS_BLUE_THRESHOLD) {
+            LCD.WriteLine("The start line was blue"); // Display what color is read
+        } else {
+            LCD.WriteLine("The start line was red"); // Display what color is read
+        }
+        move_straight(20, COUNTS_PER_INCH*13);
+        turn_left(20, COUNTS_PER_INCH*5.1);
+        move_straight(20, COUNTS_PER_INCH*16.8);
+        turn_left(20, COUNTS_PER_INCH*5.3);
+        move_straight(20, COUNTS_PER_INCH * 0.75);
+
+        Sleep(1.0);
     }
+    // Once 30 seconds elapsed, start anyway.
+    LCD.WriteLine("Did not read a light within 30 secs. Starting anyway.");
     move_straight(20, COUNTS_PER_INCH*13);
     turn_left(20, COUNTS_PER_INCH*5.1);
     move_straight(20, COUNTS_PER_INCH*16.8);
