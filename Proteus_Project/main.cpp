@@ -3,11 +3,15 @@
 #include <FEHUtility.h>
 #include <FEHMotor.h>
 #include <FEHRPS.h>
+#include <FEHServo.h>
 // #define CDS_THRESHOLD *put value here*
 #define CDS_BLUE_THRESHOLD 1.015
 #define CDS_RED_THRESHOLD .5
 #define CDS_UPPER_THRESHOLD 2.0
 #define COUNTS_PER_INCH 34.0
+#define NINETY_DEG_TWENTYSPEED 5.1
+#define SERVO_MIN 500
+#define SERVO_MAX 1624
 
 /* Declarations for encoders, motors, and input pins (all subject to
 change) */
@@ -16,6 +20,7 @@ DigitalEncoder left_encoder(FEHIO::P3_0); //Left stupid
 FEHMotor right_motor(FEHMotor::Motor0, 9.0);
 FEHMotor left_motor(FEHMotor::Motor3, 9.0); //left taped
 AnalogInputPin cds(FEHIO::P1_0);
+FEHServo arm_servo(FEHServo::Servo0);
 
 /* function for turning right. use encoders */
 void turn_right(int percentage, int encoder_counts) { 
@@ -209,18 +214,35 @@ void toRamp(bool redBlue) {
     
 }
 
+void moveArm() {
+    // Enter the min and max servo valeus from the .TouchCalibrate() fxn
+    arm_servo.SetMin(SERVO_MIN);
+    arm_servo.SetMax(SERVO_MAX);
+
+    float x, y;
+    while(!LCD.Touch(&x, &y)) {
+        arm_servo.SetDegree(1 / cds.Value() * cds.Value());
+    }
+    arm_servo.Off();
+}
+
 int main(void)
 {
-    /* Code to go to the jukebox light from the start*/
-    start();
-    Sleep(1.0);
-    bool whichButton = pushButton(); // get which button was pressed.
-    Sleep(1.0);
-    toRamp(whichButton); // move to ramp based on which button was pressed
-    move_straight(-40, COUNTS_PER_INCH * 20);
-    move_straight(-20, COUNTS_PER_INCH * 10);
-    Sleep(1.0);
-    move_straight(20, COUNTS_PER_INCH * 30);
-    /* Reads light and makes decision for which button to press */
+    
+    // /* Code to go to the jukebox light from the start*/
+    // start();
+    // Sleep(1.0);
+    // bool whichButton = pushButton(); // get which button was pressed.
+    // Sleep(1.0);
+    // toRamp(whichButton); // move to ramp based on which button was pressed
+    // move_straight(-40, COUNTS_PER_INCH * 20);
+    // move_straight(-20, COUNTS_PER_INCH * 10);
+    // Sleep(1.0);
+    // move_straight(20, COUNTS_PER_INCH * 30);
+    // /* Reads light and makes decision for which button to press */
+
+    moveArm();
+    
+
 	return 0;
 }
