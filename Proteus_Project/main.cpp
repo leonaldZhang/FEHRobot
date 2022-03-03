@@ -10,8 +10,8 @@
 #define CDS_UPPER_THRESHOLD 2.0
 #define COUNTS_PER_INCH 34.0
 #define NINETY_DEG_TWENTYSPEED 5.1
-#define SERVO_MIN 500
-#define SERVO_MAX 1624
+#define SERVO_MIN 982
+#define SERVO_MAX 2100
 
 /* Declarations for encoders, motors, and input pins (all subject to
 change) */
@@ -87,7 +87,7 @@ void move_straight(int percentage, int encoder_counts) {
     percentage is motor percentage
     angle is the desired angle of turning as a decimal
     encoder counts for how much to go*/
-void angled_turn(int direction, int percentage, float angle, int inches){
+void angled_turn(int direction, int percentage, float angle, float inches){
     // Initializing distance and angle
     int encoder_counts = inches*COUNTS_PER_INCH;
     float turn_radius = angle/100.0;
@@ -113,8 +113,11 @@ void angled_turn(int direction, int percentage, float angle, int inches){
         left_motor.SetPercent(-percentage);
         right_motor.SetPercent(-adjusted_angle);
         break;
+        case 5: 
+        left_motor.SetPercent(-percentage/(1-turn_radius));
+        right_motor.SetPercent(percentage/(1-turn_radius));
+        break;
     }
-
 
     // Keep running motors while average of left and right encoder is less
     // than encoderCounts
@@ -131,42 +134,37 @@ void start(){
     LCD.Clear();
     LCD.WriteLine("start");
 
+    // Starting servo at 0 degrees
+    arm_servo.SetMin(SERVO_MIN);
+    arm_servo.SetMax(SERVO_MAX);
+    arm_servo.SetDegree(30.0);
+
     // While elapsed time is less than 30 seconds.
     float time_now = TimeNow();
-    while(TimeNow() - time_now < 30) {
+    bool started = false;
+    while(TimeNow() - time_now < 30 && !started) {
         // Wait until light goes on
         while (cds.Value() > CDS_BLUE_THRESHOLD);
-        // Calling function to make angled turn to the front left 20 inches at a 5 degree angle
-        /*angled_turn(2, 20, 10.0, 20);
-        // Calling function to make backward right angled 5 inches at a 3 degree angle turn to re align 
-        angled_turn(4, 20, 55.0, 12);
-        // Calling function to go to the front right 8 inches at a 5 degree angle to the light
-        angled_turn(1, 20, 5.0, 5); */
         if((cds.Value() > CDS_RED_THRESHOLD) && cds.Value() < CDS_BLUE_THRESHOLD) {
             LCD.WriteLine("The start line was blue"); // Display what color is read
         } else {
             LCD.WriteLine("The start line was red"); // Display what color is read
         }
-        move_straight(20, COUNTS_PER_INCH*13);
-        turn_left(20, COUNTS_PER_INCH*5.1);
-        move_straight(20, COUNTS_PER_INCH*16.8);
-        turn_left(20, COUNTS_PER_INCH*5.3);
-        move_straight(20, COUNTS_PER_INCH * 0.75);
-
-        Sleep(1.0);
+        started = true;
     }
     // Once 30 seconds elapsed, start anyway
     LCD.WriteLine("Did not read a light within 30 secs. Starting anyway.");
+    // Call any function
+}
+
+void toJuke(){
     move_straight(20, COUNTS_PER_INCH*13);
     turn_left(20, COUNTS_PER_INCH*5.1);
     move_straight(20, COUNTS_PER_INCH*16.8);
     turn_left(20, COUNTS_PER_INCH*5.3);
     move_straight(20, COUNTS_PER_INCH * 0.75);
-
     Sleep(1.0);
-    
 }
-
 bool pushButton() {
     // Set boolean to know which button was hit. False is red, true is blue
     bool button = false;
@@ -218,12 +216,50 @@ void moveArm() {
     // Enter the min and max servo valeus from the .TouchCalibrate() fxn
     arm_servo.SetMin(SERVO_MIN);
     arm_servo.SetMax(SERVO_MAX);
-
     float x, y;
-    while(!LCD.Touch(&x, &y)) {
-        arm_servo.SetDegree(1 / cds.Value() * cds.Value());
+    while (!LCD.Touch(&x, &y)){
+    arm_servo.SetDegree(180.0);
     }
-    arm_servo.Off();
+    Sleep(.1);
+    while (LCD.Touch(&x, &y)){
+        arm_servo.SetDegree(1.0/cds.Value()*180.0);
+    }
+}
+
+void toTray(){
+    start();
+    move_straight(20, COUNTS_PER_INCH*13);
+    turn_left(20, COUNTS_PER_INCH*5.4);
+    move_straight(20, COUNTS_PER_INCH*19.5);
+    turn_right(20, COUNTS_PER_INCH*4.7);
+    Sleep(1.0);
+}
+
+void atTray(){
+    arm_servo.SetMax(SERVO_MAX);
+    arm_servo.SetMin(SERVO_MIN);
+    for (float degree = 30.0; degree < 165.0; degree += 5){
+        arm_servo.SetDegree(degree);
+        Sleep(.05);
+    }
+    Sleep(1.0);
+    move_straight(-20, COUNTS_PER_INCH * 6);
+}
+
+void toTicket(){
+    arm_servo.SetDegree(20.0);
+    turn_right(20, COUNTS_PER_INCH * 5.35);
+    move_straight(20, COUNTS_PER_INCH * 22);
+    turn_left(20, COUNTS_PER_INCH * 4.2);
+}
+
+void atTicket(){
+    arm_servo.SetMin(SERVO_MIN);
+    arm_servo.SetMax(SERVO_MAX);
+    arm_servo.SetDegree(180.0);
+    move_straight(20, COUNTS_PER_INCH * 3.5);
+    Sleep(5.0);
+    angled_turn(5, 20, 50, 2);
 }
 
 int main(void)
@@ -235,14 +271,19 @@ int main(void)
     // bool whichButton = pushButton(); // get which button was pressed.
     // Sleep(1.0);
     // toRamp(whichButton); // move to ramp based on which button was pressed
-    // move_straight(-40, COUNTS_PER_INCH * 20);
+    // move_straight(40, COUNTS_PER_INCH * 20);
+    // Sleep(10.0);
+    // move_straight(60, COUNTS_PER_INCH * 20);
+    // Sleep(30.0);
     // move_straight(-20, COUNTS_PER_INCH * 10);
     // Sleep(1.0);
     // move_straight(20, COUNTS_PER_INCH * 30);
     // /* Reads light and makes decision for which button to press */
-
-    moveArm();
-    
-
-	return 0;
+    toTray();
+    atTray();
+    toTicket();
+    atTicket();
+    return 0;
 }
+
+
