@@ -309,6 +309,13 @@ void toHotPlate()
     turn_right(20, COUNTS_PER_INCH * 1.5); // 30 degree turn.
     move_straight(20, COUNTS_PER_INCH * 24);
 }
+
+void atHotPlate() {
+    arm_servo.SetDegree(100); // set to 140 in the toHotPlate() fxn.
+    move_straight(20, COUNTS_PER_INCH * 0.75);
+    arm_servo.SetDegree(70);
+    turn_right(20, COUNTS_PER_INCH * 1.1); // 20 degree turn
+}
  
 int main(void)
 {
